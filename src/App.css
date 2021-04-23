@@ -1,38 +1,221 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
+body,
+html {
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  margin: 0;
+}
+
+.background {
+  background-image: url("images/CloudySky.jpg");
+  min-height: 100vh;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: auto;
+  padding-top: 1%;
+}
+
+.opacity {
+  background-color: rgba(36, 36, 36, 0.5);
+  height: 98%;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  overflow: visible;
+}
+
+.currentweather {
   color: white;
+  text-align: center;
+  padding-bottom: 10px;
+  font-family: sans-serif;
+  position: relative;
+  display: block;
+  font-size: 1.2em;
+  margin-top: 0.3em;
 }
 
-.App-link {
-  color: #61dafb;
+.currenttemperature {
+  color: white;
+  font-family: Georgia;
+  text-align: right;
+  position: relative;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+
+.currenticon {
+  width: 6em;
+}
+
+.currentinfo {
+  color: white;
+  font-family: Georgia;
+  text-align: left;
+  position: relative;
+}
+
+.tempicon {
+  color: white;
+  font-size: 40px;
+  text-align: right;
+  position: relative;
+  display: inline;
+}
+
+#thermometer {
+  text-decoration: none;
+  color: #26a3b9;
+}
+
+#thermometer:hover {
+  color: #c29b19;
+  transition: 0.3s;
+}
+
+.temp-text {
+  display: inline;
+}
+
+.temp-text h3 {
+  display: inline;
+}
+
+
+.humidityicon,
+.windspeedicon,
+.sunriseicon,
+.sunseticon {
+  width: 3em;
+}
+
+
+.card-text {
+  font-weight: bold;
+}
+
+.card-group {
+  opacity: 0.7;
+
+}
+
+.italic {
+  font-style: italic;
+}
+
+.advice {
+  background-color: rgba(0, 0, 0, 0.3);
+  text-align: center;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+  margin-left: 0.75em;
+  margin-right: 0.75em;
+}
+
+.advice-text {
+  color: #19d3da;
+  font-family: Georgia;
+  font-style: normal;
+  opacity: 1.0;
+  text-decoration: none;
+}
+
+.advice-text:hover {
+  color: #19d3da;
+  transition: 0.3s;
+  font-style: italic;
+}
+
+#adviceIcon {
+  font-family: Georgia;
+  font-style: normal;
+  opacity: 1.0;
+  text-decoration: none;
+}
+
+.nextdays {
+  color: white;
+  font-family: Georgia;
+  text-align: center;
+  font-size: 1.2em;
+  background-color: rgba(0, 0, 0, 0.3);
+  margin-top: 1em;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.daysicon {
+  width: 3em;
+}
+
+.daystemp {
+  margin-top: 0.2em;
+  font-size: 0.8em;
+  font-family: sans-serif;
+}
+
+.daysdescription {
+  color: white;
+  font-style: normal;
+  font-family: sans-serif;
+  font-size: 0.9em;
+  text-align: center;
+  margin-bottom: 0.2em;
+  margin-top: 1em;
+}
+
+.input-group {
+  margin: 0em;
+  padding: 0em;
+  padding-top: 0.6em;
+}
+
+.inputCol {
+  margin-right: 0;
+  margin-left: 0;
+  padding-right: 0;
+  padding-left: 0;
+  max-width: 30em;
+}
+
+.buttonCol {
+  max-width: 7.5em;
+}
+
+.current-loc {
+  display: inline;
+
+}
+
+.signature {
+  color: white;
+  font-style: italic;
+  font-size: 0.5em;
+  position: relative;
+  text-align: center;
+  bottom: 0px;
+  margin: auto;
+  width: 94%;
+}
+
+#githublink {
+  color: rgb(0, 189, 25);
+  font-style: normal;
+  font-size: 1em;
+  text-decoration: none;
+}
+
+#button-addon1 {
+  margin-left: 0em;
+  padding-top: 0.25em;
+  padding-bottom: 0.25em;
+  font-size: 0.9em;
+  min-width: 7em;
+}
+
+#buttonloc {
+  margin-left: 0em;
+  margin-top: 0.65em;
+  padding-top: 0.25em;
+  padding-bottom: 0.25em;
+  font-size: 0.9em;
+  min-width: 7em;
 }

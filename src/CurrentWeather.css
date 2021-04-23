@@ -1,0 +1,14 @@
+.currentweather {
+    color: white;
+    text-align: center;
+    padding-bottom: 10px;
+    font-family: sans-serif;
+    position: relative;
+    display: block;
+    font-size: 1.2em;
+    margin-top: 0.3em;
+}
+
+.currenticon {
+  width: 6em;
+}

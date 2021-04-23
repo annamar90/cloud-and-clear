@@ -1,0 +1,10 @@
+.currentinfo {
+    color: white;
+    font-family: Georgia;
+    text-align: left;
+    position: relative;
+}
+
+.italic {
+    font-style: italic;
+}
