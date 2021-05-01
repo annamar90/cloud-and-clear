@@ -1,23 +1,137 @@
-import React from 'react';
+import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import WeekDay from './WeekDay';
 import DayDetails from './DayDetails';
 import CurrentInfo from './CurrentInfo';
 import CurrentWeather from './CurrentWeather';
 import CurrentTemps from './CurrentTemps';
+import axios from 'axios';
 import './App.css';
 
-function App() {
-  return (
 
+function currentDate(timezone) {
+  let months= ["Jan", "Feb", "March", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  let days= ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  
+  let now= new Date();
+
+  if(timezone!==undefined) {
+      now=new Date(now.getTime()+(timezone*1000));
+  }
+
+  let monthStr= months[now.getMonth()];
+  let dayStr= days[now.getDay()];
+  let day= now.getDate();
+  let year= now.getFullYear();
+  let daySuff;
+  
+  switch(day)
+  {
+    case 1:
+    case 21:
+    case 31:
+      daySuff="st";
+      break;
+
+    case 2:
+    case 22:
+      daySuff="nd";
+      break;
+
+    case 3:
+    case 23:
+      daySuff="rd";
+      break;
+
+    default:
+      daySuff="th";
+      break;
+  }
+
+  return dayStr + ", " + day + daySuff + " " + monthStr + " " + year;
+}
+
+function currentTime() {
+  let now= new Date();
+  let minutesStr= now.getMinutes().toString();
+
+  if (minutesStr.length <2) {
+    minutesStr= "0" + minutesStr;
+  }
+
+  return now.getHours() + ":" + minutesStr;
+}
+
+function queryUrl(cityName) {
+    const apiKey= "f8ea34379b91acbd2b4566022d7f64a7";
+    const apiUrl= "https://api.openweathermap.org/data/2.5/forecast?";
+    const result= apiUrl + "q=" + cityName + "&appid=" + apiKey + "&units=metric";
+
+    return result;
+}
+
+function timestampToStr(timestamp, timezone) {
+  let time=new Date((timestamp+timezone)*1000);
+  let minutes=time.getUTCMinutes().toString();
+
+  if(minutes.length<2) {
+    minutes="0"+minutes;
+  }
+
+  return time.getUTCHours()+":"+minutes;
+}
+
+function App() {
+    const [init, setInit] = useState(0);
+    const [unit, setUnit] = useState("C");
+    const [temperature, setTemperature] = useState(null);
+    const [dateStr, setDateStr] = useState ("");
+    const [timeStr, setTimeStr] = useState ("");
+    const [cityName, setCityName] = useState ("Helsinki");
+    
+    function handleSearch(event) {
+        event.preventDefault();
+        const data= new FormData(event.target);
+        let cityQuery= data.get("searchBar").trim();
+
+        if(cityQuery.length===0) {
+            return;
+        }
+
+        axios.get(queryUrl(cityQuery)).then(handleResponse);
+    }
+
+    function handleResponse(response) {
+        setInit(2);
+        setCityName(response.data.city.name);
+
+        setTimeStr(timestampToStr(new Date().getTime()/1000, response.data.city.timezone));
+        setDateStr(currentDate(response.data.city.timezone));
+        
+        setTemperature(response.data.list[0].main);
+
+        console.log(response)
+    }
+
+    if (init===0) {
+        setInit(1);
+        axios.get(queryUrl(cityName)).then(handleResponse);
+        return null
+    }
+
+    if(init===1) {
+        return null;
+    }
+
+  return (
 <div className="background" id="container">
     <div className="opacity col-sm-10 col-md-10 col-12 col-xl-10 col-lg-10 col-xxl-10">
         <div className="container">
             <div className="row">
                 <CurrentInfo
-                    cityName= "Dolo"
-                    time= "16:32"
-                    date= "Sunday, 04th April 2021"
+                    cityName= {cityName}
+                    time= {timeStr}
+                    date= {dateStr}
                 />
                 <CurrentWeather
                     icon="030-snow.svg"
@@ -25,10 +139,9 @@ function App() {
                 />
                
                 <CurrentTemps
-                    temp="5"
-                    minTemp="-1"
-                    maxTemp="3"
-                    unitStr="C"
+                    temp= {temperature}
+                    setUnit={setUnit}
+                    unitStr={unit}
                 />
 
             </div>
@@ -103,9 +216,9 @@ function App() {
                 <div className="container" >
                     <div className="row justify-content-center" >
                         <div className="inputCol col">
-                            <form className="input-group input-group-sm mb-3">
+                            <form className="input-group input-group-sm mb-3" onSubmit={handleSearch}>
                                 <button className="btn btn-success" type="submit" id="button-addon1">Search City</button>
-                                <input type="text" className="form-control" aria-label="Search city input" aria-describedby="button-addon1" placeholder="Helsinki, FI" />  
+                                <input name="searchBar" type="text" className="form-control" aria-label="Search city input" aria-describedby="button-addon1" placeholder="Helsinki, FI" />  
                             </form>
                         </div>
                         <div className="buttonCol col">
