@@ -4,16 +4,6 @@ html {
   margin: 0;
 }
 
-.background {
-  background-image: url("images/CloudySky.jpg");
-  min-height: 100vh;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  overflow: auto;
-  padding-top: 1%;
-}
-
 .opacity {
   background-color: rgba(36, 36, 36, 0.5);
   height: 98%;

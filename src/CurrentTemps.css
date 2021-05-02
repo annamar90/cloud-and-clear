@@ -8,6 +8,7 @@
 #thermometer {
     text-decoration: none;
     color: #26a3b9;
+    padding-right: 0.2em;
 }
 
 #thermometer:hover {

@@ -6,80 +6,8 @@ import CurrentInfo from './CurrentInfo';
 import CurrentWeather from './CurrentWeather';
 import CurrentTemps from './CurrentTemps';
 import axios from 'axios';
+import {currentDate, getInfo, queryUrl, timestampToStr} from './Helpers';
 import './App.css';
-
-
-function currentDate(timezone) {
-  let months= ["Jan", "Feb", "March", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  let days= ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  
-  let now= new Date();
-
-  if(timezone!==undefined) {
-      now=new Date(now.getTime()+(timezone*1000));
-  }
-
-  let monthStr= months[now.getMonth()];
-  let dayStr= days[now.getDay()];
-  let day= now.getDate();
-  let year= now.getFullYear();
-  let daySuff;
-  
-  switch(day)
-  {
-    case 1:
-    case 21:
-    case 31:
-      daySuff="st";
-      break;
-
-    case 2:
-    case 22:
-      daySuff="nd";
-      break;
-
-    case 3:
-    case 23:
-      daySuff="rd";
-      break;
-
-    default:
-      daySuff="th";
-      break;
-  }
-
-  return dayStr + ", " + day + daySuff + " " + monthStr + " " + year;
-}
-
-function currentTime() {
-  let now= new Date();
-  let minutesStr= now.getMinutes().toString();
-
-  if (minutesStr.length <2) {
-    minutesStr= "0" + minutesStr;
-  }
-
-  return now.getHours() + ":" + minutesStr;
-}
-
-function queryUrl(cityName) {
-    const apiKey= "f8ea34379b91acbd2b4566022d7f64a7";
-    const apiUrl= "https://api.openweathermap.org/data/2.5/forecast?";
-    const result= apiUrl + "q=" + cityName + "&appid=" + apiKey + "&units=metric";
-
-    return result;
-}
-
-function timestampToStr(timestamp, timezone) {
-  let time=new Date((timestamp+timezone)*1000);
-  let minutes=time.getUTCMinutes().toString();
-
-  if(minutes.length<2) {
-    minutes="0"+minutes;
-  }
-
-  return time.getUTCHours()+":"+minutes;
-}
 
 function App() {
     const [init, setInit] = useState(0);
@@ -88,6 +16,25 @@ function App() {
     const [dateStr, setDateStr] = useState ("");
     const [timeStr, setTimeStr] = useState ("");
     const [cityName, setCityName] = useState ("Helsinki");
+    const [dayDetails, setDayDetails] = useState({
+        humidity: "",
+        windspeed: "",
+        sunrise: "",
+        sunset: ""
+    });
+
+    const [currentWeatherBackground, setCurrentWeatherBackground] = useState("CloudySky.jpg");
+
+    const [currentWeatherInfo, setCurrentWeatherInfo] = useState ({
+        description: "",
+        icon: ""
+    });
+
+    const [currentWeatherTip, setCurrentWeatherTip] = useState({advice: "",
+        emojis: "",
+        url: ""
+    });
+
     
     function handleSearch(event) {
         event.preventDefault();
@@ -110,7 +57,20 @@ function App() {
         
         setTemperature(response.data.list[0].main);
 
-        console.log(response)
+        const weatherInfo=getInfo(response.data.list[0].weather);
+        setCurrentWeatherInfo({description: response.data.list[0].weather[0].description,
+        icon: weatherInfo.iconFile});
+        setCurrentWeatherTip(weatherInfo.tip);
+        setCurrentWeatherBackground(weatherInfo.backgroundFile);
+
+        setDayDetails({
+            humidity: response.data.list[0].main.humidity,
+            windspeed: response.data.list[0].wind.speed,
+            sunrise: timestampToStr(response.data.city.sunrise, response.data.city.timezone),
+            sunset: timestampToStr(response.data.city.sunset, response.data.city.timezone),
+        });
+
+        console.log(response.data)
     }
 
     if (init===0) {
@@ -124,7 +84,16 @@ function App() {
     }
 
   return (
-<div className="background" id="container">
+<div className="background" id="container"
+style={{
+  backgroundImage: "url('images/"+currentWeatherBackground+"')",
+  minHeight: "100vh",
+  backgroundPosition: "center",
+  backgroundRepeat: "no-repeat",
+  backgroundSize: "cover",
+  overflow: "auto",
+  paddingTop: "1%"
+}}>
     <div className="opacity col-sm-10 col-md-10 col-12 col-xl-10 col-lg-10 col-xxl-10">
         <div className="container">
             <div className="row">
@@ -134,8 +103,8 @@ function App() {
                     date= {dateStr}
                 />
                 <CurrentWeather
-                    icon="030-snow.svg"
-                    text="snowy"
+                    icon= {currentWeatherInfo.icon}
+                    text= {currentWeatherInfo.description}
                 />
                
                 <CurrentTemps
@@ -148,8 +117,8 @@ function App() {
 
             <div className="row">
                 <div className="col advice">
-                    <a className="advice-text" href="https://github.com/annamar90/Weather-App" id="adviceLink" target="_blank">Tips</a>
-                    <span id="adviceIcon"></span>
+                    <a className="advice-text" href= {currentWeatherTip.url} id="adviceLink" target="_blank">{currentWeatherTip.advice}</a>
+                    <span id="adviceIcon">{currentWeatherTip.emojis}</span>
                 </div>
             </div>
 
@@ -157,22 +126,22 @@ function App() {
                 <DayDetails
                     title="Humidity"
                     icon="019-humidity.svg"
-                    text="45%"
+                    text={dayDetails.humidity+"%"}
                 />
                  <DayDetails
                     title="Wind Speed"
                     icon="049-windsock.svg"
-                    text="20 km/h"
+                    text={dayDetails.windspeed+" km/h"}
                 />
                 <DayDetails
                     title="Sunrise"
                     icon="012-dawn.svg"
-                    text="06:36 am"
+                    text={dayDetails.sunrise}
                 />
                 <DayDetails
                     title="Sunset"
                     icon="037-sunset.svg"
-                    text="18:36 pm"
+                    text={dayDetails.sunset}
                 />
             </div> 
             
