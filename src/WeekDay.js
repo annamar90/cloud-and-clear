@@ -4,8 +4,8 @@ import './WeekDay.css';
 
 export default function WeekDay(props) {
     const icon="icons/"+props.icon;
-    const minTemp=props.minTemp+" °"+props.unitStr;
-    const maxTemp=props.maxTemp+" °"+props.unitStr;
+    const minTemp=props.minTemp;
+    const maxTemp=props.maxTemp;
 
     return (
         <div className="col">

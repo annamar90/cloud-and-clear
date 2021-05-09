@@ -78,6 +78,47 @@ export function timestampToStr(timestamp, timezone) {
   return time.getUTCHours()+":"+minutes;
 }
 
+export function toFarenheit(val) {
+    return Math.round((val*(9/5))+32);
+}
+
+export function tempsToStr(value0, value1, value2, unitStr)
+{
+    let t0=value0;
+    let t1=value1;
+    let t2=value2;
+
+    if(unitStr==="F") {
+        t0=toFarenheit(t0);
+        t1=toFarenheit(t1);
+        t2=toFarenheit(t2);
+    }
+    else {
+        t0=Math.round(t0);
+        t1=Math.round(t1);
+        t2=Math.round(t2);
+    }
+
+    let t0Str=t0;
+    let t1Str=t1;
+    let t2Str=t2;
+
+    if(unitStr!==undefined)
+    {
+      t0Str+=" °"+unitStr;
+      t1Str+=" °"+unitStr;
+      t2Str+=" °"+unitStr;
+    }
+
+    return(
+        {
+            t0: t0Str,
+            t1: t1Str,
+            t2: t2Str
+        }
+    )
+}
+
 export function getInfo(weather) {
   let status=weather[0].id;
   let statusGroup=parseInt(status.toString()[0]);

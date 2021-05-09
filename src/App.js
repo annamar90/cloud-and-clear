@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
-import WeekDay from './WeekDay';
+import WeekDays from './WeekDays';
 import DayDetails from './DayDetails';
 import CurrentInfo from './CurrentInfo';
 import CurrentWeather from './CurrentWeather';
@@ -15,6 +15,7 @@ function App() {
     const [temperature, setTemperature] = useState(null);
     const [dateStr, setDateStr] = useState ("");
     const [timeStr, setTimeStr] = useState ("");
+    const [forecastDays, setForecastDays] = useState (null);
     const [cityName, setCityName] = useState ("Helsinki");
     const [dayDetails, setDayDetails] = useState({
         humidity: "",
@@ -71,6 +72,23 @@ function App() {
             sunset: timestampToStr(response.data.city.sunset, response.data.city.timezone),
         });
 
+        handleForecast(response.data.city);
+    }
+
+    function handleForecast(cityQuery) {
+
+        const excludedParts= "current,minutely,hourly";
+        const apiKey="f8ea34379b91acbd2b4566022d7f64a7";
+        const lat=cityQuery.coord.lat;
+        const lon=cityQuery.coord.lon;
+        const apiUnits="metric";
+        const apiUrl="https://api.openweathermap.org/data/2.5/onecall?lat="+lat+"&lon="+lon+"&exclude="+excludedParts+"&appid="+apiKey+"&units=" + apiUnits;
+
+        axios.get(apiUrl).then(handleForecastResult);
+    }
+
+    function handleForecastResult(response) {
+        setForecastDays(response.data.daily)
     }
 
     function handleFindMe() {
@@ -163,61 +181,27 @@ style={{
                     text={dayDetails.sunset}
                 />
             </div> 
-            
                 
-                <div className="row nextdays">
-                    <WeekDay
-                        day="Monday"
-                        icon="036-sun.svg"
-                        description="sunny"
-                        minTemp="-3"
-                        maxTemp="7"
-                        unitStr="C"
-                    />
-                    <WeekDay
-                        day="Tuesday"
-                        icon="007-cloudy day.svg"
-                        description="cloudy"
-                        minTemp="0"
-                        maxTemp="2"
-                        unitStr="C"
-                    />
-                    <WeekDay
-                        day="Wednesday"
-                        icon="041-thunderstorm.svg"
-                        description="stormy"
-                        minTemp="5"
-                        maxTemp="12"
-                        unitStr="C"
-                    />
-                    <WeekDay
-                        day="Thursday"
-                        icon="033-snowy.svg"
-                        description="snowy"
-                        minTemp="-1"
-                        maxTemp="2"
-                        unitStr="C"
-                    />
-                </div>
-            
-    
-                <div className="container" >
-                    <div className="row justify-content-center" >
-                        <div className="inputCol col">
-                            <form className="input-group input-group-sm mb-3" onSubmit={handleSearch}>
-                                <button className="btn btn-success" type="submit" id="button-addon1">Search City</button>
-                                <input name="searchBar" type="text" className="form-control" aria-label="Search city input" aria-describedby="button-addon1" placeholder="Helsinki, FI" />  
-                            </form>
-                        </div>
-                        <div className="buttonCol col">
-                            <button className="btn btn-primary" type="submit" id="buttonloc" onClick={handleFindMe}>Find me 🧭</button>
-                        </div>
+            <div className="row nextdays">
+                <WeekDays
+                    forecastDays={forecastDays}
+                    unitStr={unit}
+                />
+            </div>
+        
+            <div className="container" >
+                <div className="row justify-content-center" >
+                    <div className="inputCol col">
+                        <form className="input-group input-group-sm mb-3" onSubmit={handleSearch}>
+                            <button className="btn btn-success" type="submit" id="button-addon1">Search City</button>
+                            <input name="searchBar" type="text" className="form-control" aria-label="Search city input" aria-describedby="button-addon1" placeholder="Helsinki, FI" />  
+                        </form>
+                    </div>
+                    <div className="buttonCol col">
+                        <button className="btn btn-primary" type="submit" id="buttonloc" onClick={handleFindMe}>Find me 🧭</button>
                     </div>
                 </div>
-                
-                
-                
-                
+            </div>
             
             <div className="signature">
                 <p>
