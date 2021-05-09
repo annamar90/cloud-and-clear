@@ -50,6 +50,7 @@ function App() {
 
     function handleResponse(response) {
         setInit(2);
+    
         setCityName(response.data.city.name);
 
         setTimeStr(timestampToStr(new Date().getTime()/1000, response.data.city.timezone));
@@ -70,8 +71,26 @@ function App() {
             sunset: timestampToStr(response.data.city.sunset, response.data.city.timezone),
         });
 
-        console.log(response.data)
     }
+
+    function handleFindMe() {
+        navigator.geolocation.getCurrentPosition(handleFindMeResult);
+    }
+
+    function handleFindMeResult(pos) {
+        let lat= pos.coords.latitude;
+        let lon= pos.coords.longitude;
+
+        let apiUnits="metric";
+
+        let apiKey= "f8ea34379b91acbd2b4566022d7f64a7";
+        let apiUrl= "https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&units=" + apiUnits + "&appid=" + apiKey;
+
+
+        axios.get(apiUrl).then((resp)=>{axios.get(queryUrl(resp.data.name)).then(handleResponse)});
+    }
+    
+
 
     if (init===0) {
         setInit(1);
@@ -191,7 +210,7 @@ style={{
                             </form>
                         </div>
                         <div className="buttonCol col">
-                            <button className="btn btn-primary" type="submit" id="buttonloc">Find me 🧭</button>
+                            <button className="btn btn-primary" type="submit" id="buttonloc" onClick={handleFindMe}>Find me 🧭</button>
                         </div>
                     </div>
                 </div>
